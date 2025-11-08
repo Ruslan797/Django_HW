@@ -30,9 +30,9 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.str('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'test_app.apps.TestAppConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -82,10 +84,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 if env.bool('REMOTE_DB'):
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
+            'ENGINE': 'django.db.backends.mysql',
             'NAME': env.str('MYSQL_DATABASE'),
             'HOST': env.str('MYSQL_HOST'),
-            'PORT': env.int('MYSQL_HOST'),
+            'PORT': env.int('MYSQL_PORT'),
             'USER': env.str('MYSQL_USER'),
             'PASSWORD': env.str('MYSQL_PASSWORD'),
         }
@@ -96,7 +98,7 @@ else:
 
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'Name' : BASE_DIR / 'db.sqlite3',
+            'NAME' : BASE_DIR / 'db.sqlite3',
         }
     }
 # Password validation
