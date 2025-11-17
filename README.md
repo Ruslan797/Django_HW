@@ -6,13 +6,19 @@ Added screenshot in READMR.md
 
 
 
-## 📸 Screenshots
+## 🖼️ Screenshots
 
 ### Admin Panel
-![Admin Panel](core/screenshots/admin-panel.png)
+![Admin Panel](core/screenshots/Screenshot 2025-11-17.png)
 
 ### Task List
-![Task List](core/screenshots/task-list.png)
+![Task List](core/screenshots/Screenshot 2025-11-17 (1).png)
 
 ### SubTask Form
-![SubTask Form](core/screenshots/subtask-form.png)
+![SubTask Form](core/screenshots/Screenshot 2025-11-17 (2).png)
+
+### User List
+![User List](core/screenshots/Screenshot%202025-11-17%20(3).png)
+
+### Category View
+![Category View](core/screenshots/Screenshot%202025-11-17%20(4).png)
