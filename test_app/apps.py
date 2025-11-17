@@ -6,7 +6,5 @@ class TestAppConfig(AppConfig):
     name = 'test_app'
 
 
-class TaskmanagerConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'taskmanager'
+
 
