@@ -6,15 +6,13 @@ Added screenshot in READMR.md
 
 
 
-![Админка Django](core/screenshots/screenshots.png)
-
 ## 📸 Screenshots
 
 ### Admin Panel
-![Admin Panel](screenshots/admin-panel.png)
+![Admin Panel](core/screenshots/admin-panel.png)
 
 ### Task List
-![Task List](screenshots/task-list.png)
+![Task List](core/screenshots/task-list.png)
 
 ### SubTask Form
-![SubTask Form](screenshots/subtask-form.png)
+![SubTask Form](core/screenshots/subtask-form.png)
