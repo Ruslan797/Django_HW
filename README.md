@@ -22,3 +22,22 @@ Added screenshot in READMR.md
 
 ### Category View
 ![Category View](core/screenshots/Screenshot%202025-11-17%20225021.png)
+
+
+### create task
+![Create_task](core/screenshots/Create_task.png)
+
+### create subtask
+![Create_subtask](core/screenshots/create_subtask.png)
+
+### consol_create_reading
+![Create_subtask](core/screenshots/consol_create_reading.png)
+
+
+### consol_updeted
+![Create_subtask](core/screenshots/consol_updated.png)
+
+
+### delete
+![Create_subtask](core/screenshots/delete.png)
+
