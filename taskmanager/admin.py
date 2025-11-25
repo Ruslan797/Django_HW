@@ -18,6 +18,7 @@ class TaskAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ('-created_at',)
 
+
     def short_title(self, obj):
         if len(obj.title) > 10:
             return f"{obj.title[:10]}..."
@@ -33,6 +34,7 @@ class SubTaskAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     ordering = ('title',)
     actions = ['mark_as_done']
+
 
     def mark_as_done(self, request, queryset):
         updated = queryset.update(status='Done')

@@ -6,27 +6,36 @@ Added screenshot in READMR.md
 
 ## 🖼️ Screenshots
 
-
-### create task
-![Create_task](core/screenshots/Create_task.png)
-
-### create subtask
-![Create_subtask](core/screenshots/create_subtask.png)
-
-### consol_create_reading
-![Create_subtask](core/screenshots/consol_create_reading.png)
+### Screenschot_hw_12
+![Create_subtask](core/screenshots/Screenschot_hw_12.png)
 
 
-### consol_updeted
-![Create_subtask](core/screenshots/consol_updated.png)
+### HW12
+![Create_subtask](core/screenshots/HW12.png)
 
 
-### delete
-![Create_subtask](core/screenshots/delete.png)
+### hw
+![Create_subtask](core/screenshots/hw.png)
 
 
-### HW_11
-![Create_subtask](core/screenshots/HW_11.png)
+### HW_12
+![Create_subtask](core/screenshots/HW_12.png)
+
+
+### Postman 1
+![Create_subtask](core/screenshots/Postman1.png)
+
+
+### Postman 2
+![Create_subtask](core/screenshots/Postman2.png)
+
+
+### Postman 3
+![Create_subtask](core/screenshots/Postman3.png)
+
+
+### Postman 4
+![Create_subtask](core/screenshots/Postman4.png)
 
 
 
