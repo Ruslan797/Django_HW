@@ -61,31 +61,63 @@
 #         self.perform_destroy(instance)
 #         return Response(status=status.HTTP_204_NO_CONTENT)
 
-from rest_framework.response import Response
-from rest_framework import viewsets
+
+
+# #####   Home Work 14
+#
+# from rest_framework.response import Response
+# from rest_framework import viewsets
+# from taskmanager.models import Task
+# from taskmanager.serializers.tasks import TaskSerializer
+#
+# class TaskViewSet(viewsets.ModelViewSet):
+#     serializer_class = TaskSerializer
+#
+#     def get_queryset(self):
+#         queryset = Task.objects.all().order_by('-created_at')
+#         day_of_week = self.request.query_params.get('day_of_week', None)
+#         if day_of_week:
+#
+#             days = {
+#                 'monday': 2,
+#                 'tuesday': 3,
+#                 'wednesday': 4,
+#                 'thursday': 5,
+#                 'friday': 6,
+#                 'saturday': 7,
+#                 'sunday': 1,
+#             }
+#             day_number = days.get(day_of_week.lower())
+#             if day_number:
+#                 queryset = queryset.filter(deadline__week_day=day_number)
+#         return queryset
+
+
+### Home Work 15
+
+
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from taskmanager.models import Task
 from taskmanager.serializers.tasks import TaskSerializer
 
-class TaskViewSet(viewsets.ModelViewSet):
+
+
+class TaskListCreateView(ListCreateAPIView):
+    queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['status', 'deadline', 'categories']
+    search_fields = ['title', 'description']
+    ordering_fields = ['created_at', 'deadline', 'title']
+    ordering = ['-created_at']
 
-    def get_queryset(self):
-        queryset = Task.objects.all().order_by('-created_at')
-        day_of_week = self.request.query_params.get('day_of_week', None)
-        if day_of_week:
-
-            days = {
-                'monday': 2,
-                'tuesday': 3,
-                'wednesday': 4,
-                'thursday': 5,
-                'friday': 6,
-                'saturday': 7,
-                'sunday': 1,
-            }
-            day_number = days.get(day_of_week.lower())
-            if day_number:
-                queryset = queryset.filter(deadline__week_day=day_number)
-        return queryset
+class TaskRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
 
 
