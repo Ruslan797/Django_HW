@@ -63,11 +63,11 @@ Added screenshot in READMR.md
 
 
 ### postman_hw_15
-![Create_subtask](core/screenshots/postmanHW_15.png)
+![Create_subtask](core/screenshots/postman_hw_15.png)
 
 
 ### postmanHW_15
-![Create_subtask](core/screenshots/postman_hw_15.png)
+![Create_subtask](core/screenshots/postmanHW_15.png)
 
 
 ### HW_15_postman
