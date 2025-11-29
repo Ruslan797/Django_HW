@@ -52,12 +52,14 @@
 #         "tasks_by_status": by_status,
 #         "overdue_tasks": overdue
 #     })
-
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import SubTask
-from .serializers import SubTaskCreateSerializer
+from taskmanager.serializers.subtasks import SubTaskCreateSerializer
+from rest_framework.pagination import PageNumberPagination
+from taskmanager.serializers.subtasks import SubTaskSerializer
 
 # Задание 5:
 class SubTaskListCreateView(APIView):
@@ -97,3 +99,16 @@ class SubTaskDetailUpdateDeleteView(APIView):
         subtask = self.get_object(pk)
         subtask.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class SubTaskList(generics.ListAPIView):
+    serializer_class = SubTaskSerializer
+    queryset = SubTask.objects.all().order_by('-created_at')
+    pagination_class = LargeResultsSetPagination
+
