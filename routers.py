@@ -15,10 +15,20 @@
 # ] + router.urls
 
 
-from django.contrib import admin
-from django.urls import path, include
+# from django.contrib import admin
+# from django.urls import path, include
+#
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('api/v1/', include('taskmanager.urls')),
+# ]
+
+from rest_framework.routers import SimpleRouter
+from taskmanager.views.categories import CategoryViewSet
+
+router = SimpleRouter()
+router.register('categories', CategoryViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/', include('taskmanager.urls')),
-]
+    # другие пути
+] + router.urls

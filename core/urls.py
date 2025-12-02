@@ -44,11 +44,22 @@
 ###   Home Work 15
 
 
+# from django.urls import path, include
+#
+# urlpatterns = [
+#     path('tasks/', include('taskmanager.urls.tasks')),
+#     path('subtasks/', include('taskmanager.urls.subtasks')),
+# ]
+
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from taskmanager.views.categories import CategoryViewSet
+
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet, basename='category')
 
 urlpatterns = [
-    path('tasks/', include('taskmanager.urls.tasks')),
-    path('subtasks/', include('taskmanager.urls.subtasks')),
+    path('api/v1/', include(router.urls)),
 ]
 
 

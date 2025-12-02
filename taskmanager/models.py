@@ -1,15 +1,39 @@
 from django.db import models
+from django.utils import timezone
+
+
+class CategoryManager(models.Manager):
+    def get_queryset(self):
+        # Return only active (not deleted) categories.
+        return super().get_queryset().filter(is_deleted=False)
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
 
     class Meta:
         unique_together = ['name']
         db_table = 'task_manager_category'
         verbose_name = 'Category'
 
+
+    objects = CategoryManager()
+    all_objects = models.Manager()
+
+
+    def delete(self, using=None, keep_parents=False):
+        """Soft delete instead of physical delete"""
+        self.is_deleted = True
+        self.deleted_at = timezone.now()
+        self.save()
+
     def __str__(self):
-        return f"Category - {self.name}"
+        return self.name
 
 
 class Task(models.Model):
@@ -69,55 +93,7 @@ class SubTask(models.Model):
 
 
 
-"""
-Домашнее задание: Проект "Менеджер задач" — продолжение
-Цель:
-Добавить строковое представление (str) и метаданные (Meta) к моделям менеджера задач, 
-а также настроить административную панель для удобного управления этими моделями.
 
-Реализуйте изменения в моделях:
-Модель Task:
-Добавить метод str, который возвращает название задачи.
-
-Добавить класс Meta с настройками:
-
-Имя таблицы в базе данных: 'task_manager_task'.
-Сортировка по убыванию даты создания.
-Человекочитаемое имя модели: 'Task'.
-Уникальность по полю 'title'.
-
-Модель SubTask:
-Добавить метод str, который возвращает название подзадачи.
-Добавить класс Meta с настройками:
-Имя таблицы в базе данных: 'task_manager_subtask'.
-Сортировка по убыванию даты создания.
-Человекочитаемое имя модели: 'SubTask'.
-Уникальность по полю 'title'.
-
-Модель Category:
-Добавить метод str, который возвращает название категории.
-
-Добавить класс Meta с настройками:
-Имя таблицы в базе данных: 'task_manager_category'.
-Человекочитаемое имя модели: 'Category'.
-Уникальность по полю 'name'.
-
-
-Настройте отображение моделей в админке: 
-
-В файле admin.py вашего приложения добавьте классы администратора для настройки отображения моделей Task, SubTask и Category.
-
-Зафиксируйте изменения в гит: 
-Создайте новый коммит и запушьте его в ваш гит.
-
-Создайте записи через админку:
-Создайте суперпользователя.
-Перейдите в административную панель Django.
-Добавьте несколько объектов для каждой модели.
-Оформите ответ: 
-
-Прикрепите ссылку на гит и скриншоты, где видны созданные объекты к ответу на домашнее задание.
-"""
 
 
 
