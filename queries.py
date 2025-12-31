@@ -83,3 +83,5 @@ print("\nAll Tasks after deletion:")
 print(Task.objects.all())
 print("\nAll SubTasks after deletion:")
 print(SubTask.objects.all())
+
+

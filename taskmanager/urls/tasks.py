@@ -20,7 +20,6 @@
 ###   Home Work 15
 
 
-# taskmanager/urls/tasks.py
 from django.urls import path
 from taskmanager.views.tasks import (
     TaskListCreateView,
@@ -31,4 +30,6 @@ urlpatterns = [
     path('', TaskListCreateView.as_view(), name='task-list-create'),
     path('<int:pk>/', TaskRetrieveUpdateDestroyView.as_view(), name='task-detail'),
 ]
+
+
 

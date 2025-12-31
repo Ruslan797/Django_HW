@@ -23,12 +23,24 @@
 #     path('api/v1/', include('taskmanager.urls')),
 # ]
 
-from rest_framework.routers import SimpleRouter
-from taskmanager.views.categories import CategoryViewSet
+# from rest_framework.routers import SimpleRouter
+# from taskmanager.views.categories import CategoryViewSet
+#
+# router = SimpleRouter()
+# router.register('categories', CategoryViewSet)
+#
+# urlpatterns = [
+#     path('tags/', include('taskmanager.urls.tag')),
+#     path('tasks/', include('taskmanager.urls.task')),
+#     path('categories/', include('taskmanager.urls.categories')),
+# ] + router.urls
 
-router = SimpleRouter()
-router.register('categories', CategoryViewSet)
+from django.urls import path, include
+
 
 urlpatterns = [
-    # другие пути
-] + router.urls
+    path('tasks/', include('taskmanager.urls.tasks')),
+    path('subtasks/', include('taskmanager.urls.subtasks')),
+    path('category/', include('taskmanager.urls.categories')),
+
+]

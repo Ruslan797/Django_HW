@@ -9,12 +9,20 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
 from logging import DEBUG
 from pathlib import Path
 from environ import Env
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGS_DIR = BASE_DIR / "logs"
+LOGS_DIR.mkdir(exist_ok=True)
+HTTP_LOG = LOGS_DIR / "http_logs.log"
+DB_LOG = LOGS_DIR / "db_logs.log"
+
 env = Env()
 env.read_env(str(BASE_DIR / '.env'))
 
@@ -30,7 +38,6 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS').split(',')
 
@@ -45,9 +52,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'test_app.apps.TestAppConfig',
-    'django_filters',
+
     'rest_framework',
-    
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'django_filters',
+
     
     'taskmanager.apps.TaskmanagerConfig',
 
@@ -149,11 +159,150 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomCursorPagination',
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
     'PAGE_SIZE': 5,
+
     'DEFAULT_FILTER_BACKENDS': [
     'django_filters.rest_framework.DjangoFilterBackend',
     'rest_framework.filters.SearchFilter',
     'rest_framework.filters.OrderingFilter',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.RemoteUserAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
+        'taskmanager.pagination.OverrideCursorPaginator',
+    ]
+
 }
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKEN': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'TOKEN_CLAIM_TIPE': 'token_tipe'
+
+}
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '{levelname} {asctime} {module} {message}',
+#             'style': '{',
+#         },
+#         'simple': {
+#             'format': '{levelname} {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'INFO',
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple'
+#         },
+#         'http_logs': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             # 'filename': os.path.join(BASE_DIR, 'logs', 'http_logs.log'),
+#             'filename': str(HTTP_LOG),
+#             'formatter': 'verbose'
+#         },
+#         'db_logs': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             # 'filename': os.path.join(BASE_DIR, 'logs', 'db_logs.log'),
+#             'formatter': 'verbose'
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#             'propagate': True,
+#         },
+#         'django.request': {
+#             'handlers': ['http_logs'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#         'django.db.backends': {
+#             'handlers': ['db_logs'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     },
+# }
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'http_logs': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': str(HTTP_LOG),
+            'formatter': 'verbose'
+        },
+        'db_logs': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': str(DB_LOG),
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['http_logs'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['db_logs'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+

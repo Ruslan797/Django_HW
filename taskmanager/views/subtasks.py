@@ -1,3 +1,4 @@
+from urllib.request import Request
 
 ###  Home Work 14
 
@@ -65,8 +66,12 @@ from rest_framework.generics import (
 )
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.views import APIView
 from taskmanager.models import SubTask
 from taskmanager.serializers.subtasks import SubTaskSerializer
+
 
 class SubTaskListCreateView(ListCreateAPIView):
     queryset = SubTask.objects.all()
@@ -81,4 +86,13 @@ class SubTaskListCreateView(ListCreateAPIView):
 class SubTaskRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
+
+
+class SubtaskLoginApyView(APIView):
+
+    def post(self, request: Request) -> Response:
+        title = request.data.get('title')
+
+
+
 

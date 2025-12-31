@@ -7,7 +7,7 @@ from taskmanager.models import Task, SubTask, Category
 
 from datetime import datetime
 from taskmanager.serializers.subtasks import SubTaskSerializer
-from taskmanager.serializers.categorys import CategoryCreateSerializer, CategorySerializer
+from taskmanager.serializers.categories import CategoryCreateSerializer, CategorySerializer
 
 
 # class TaskDetailSerializer(serializers.ModelSerializer):
@@ -58,7 +58,7 @@ from taskmanager.serializers.categorys import CategoryCreateSerializer, Category
 
 from rest_framework import serializers
 from taskmanager.models import Task, Category
-from taskmanager.serializers.categorys import CategorySerializer
+from taskmanager.serializers.categories import CategorySerializer
 
 class TaskSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)

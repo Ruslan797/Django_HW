@@ -50,17 +50,27 @@
 #     path('tasks/', include('taskmanager.urls.tasks')),
 #     path('subtasks/', include('taskmanager.urls.subtasks')),
 # ]
+#
+# Homework 16
 
+# from django.urls import path, include
+# from rest_framework.routers import DefaultRouter
+# from taskmanager.views.categories import CategoryViewSet
+#
+# router = DefaultRouter()
+# router.register(r'categories', CategoryViewSet, basename='category')
+#
+# urlpatterns = [
+#     path('api/v1/', include(router.urls)),
+# ]
+
+
+from django.contrib import admin
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from taskmanager.views.categories import CategoryViewSet
-
-router = DefaultRouter()
-router.register(r'categories', CategoryViewSet, basename='category')
 
 urlpatterns = [
-    path('api/v1/', include(router.urls)),
+    path('admin/', admin.site.urls),
+    path('api/v1/', include('routers')),
 ]
-
 
 
