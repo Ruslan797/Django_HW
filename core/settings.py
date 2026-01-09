@@ -28,7 +28,7 @@ env.read_env(str(BASE_DIR / '.env'))
 
 SECRET_KEY = env.str('SECRET_KEY')
 DEBUG = env.bool('DEBUG')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -57,9 +57,11 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
     'django_filters',
+    'rest_framework_simplejwt.token_blacklist',
 
     
     'taskmanager.apps.TaskmanagerConfig',
+    'accounts.apps.AccountsConfig',
 
 ]
 
@@ -93,6 +95,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
+
+AUTH_USER_MODEL = "accounts.User"
+
 
 
 # Database
@@ -176,9 +181,9 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.RemoteUserAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+      # 'rest_framework.permissions.AllowAny',
         'rest_framework.permissions.IsAuthenticated',
-        'taskmanager.pagination.OverrideCursorPaginator',
+      # 'taskmanager.pagination.OverrideCursorPaginator',
     ]
 
 }
@@ -188,8 +193,8 @@ from datetime import timedelta
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=90),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKEN': False,
-    'BLACKLIST_AFTER_ROTATION': False,
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
@@ -200,58 +205,11 @@ SIMPLE_JWT = {
 
 }
 
+JWT_COOKIE_SECURE = False
+JWT_COOKIE_SAMESITE = "Lax"
+JWT_ACCESS_COOKIE_NAME = "access_token"
+JWT_REFRESH_COOKIE_NAME = "refresh_token"
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '{levelname} {asctime} {module} {message}',
-#             'style': '{',
-#         },
-#         'simple': {
-#             'format': '{levelname} {message}',
-#             'style': '{',
-#         },
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'INFO',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple'
-#         },
-#         'http_logs': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             # 'filename': os.path.join(BASE_DIR, 'logs', 'http_logs.log'),
-#             'filename': str(HTTP_LOG),
-#             'formatter': 'verbose'
-#         },
-#         'db_logs': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             # 'filename': os.path.join(BASE_DIR, 'logs', 'db_logs.log'),
-#             'formatter': 'verbose'
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'INFO',
-#             'propagate': True,
-#         },
-#         'django.request': {
-#             'handlers': ['http_logs'],
-#             'level': 'DEBUG',
-#             'propagate': False,
-#         },
-#         'django.db.backends': {
-#             'handlers': ['db_logs'],
-#             'level': 'DEBUG',
-#             'propagate': False,
-#         },
-#     },
-# }
 
 
 LOGGING = {
