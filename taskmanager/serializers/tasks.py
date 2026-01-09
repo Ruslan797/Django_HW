@@ -56,11 +56,36 @@ from taskmanager.serializers.categories import CategoryCreateSerializer, Categor
 
 ### Home Work 15
 
+# from rest_framework import serializers
+# from taskmanager.models import Task, Category
+# from taskmanager.serializers.categories import CategorySerializer
+#
+# class TaskSerializer(serializers.ModelSerializer):
+#     categories = CategorySerializer(many=True, read_only=True)
+#     categories_ids = serializers.PrimaryKeyRelatedField(
+#         many=True,
+#         queryset=Category.objects.all(),
+#         source='categories',
+#         write_only=True,
+#     )
+#
+#     class Meta:
+#         model = Task
+#         fields = [
+#             'id', 'title', 'description', 'categories', 'categories_ids',
+#             'status', 'deadline', 'created_at'
+#         ]
+#         read_only_fields = ['created_at']
+
 from rest_framework import serializers
 from taskmanager.models import Task, Category
 from taskmanager.serializers.categories import CategorySerializer
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class TaskSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')  # Поле только для чтения
     categories = CategorySerializer(many=True, read_only=True)
     categories_ids = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -72,8 +97,9 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [
-            'id', 'title', 'description', 'categories', 'categories_ids',
+            'id', 'title', 'description', 'owner', 'categories', 'categories_ids',
             'status', 'deadline', 'created_at'
         ]
-        read_only_fields = ['created_at']
+        read_only_fields = ['created_at', 'owner']  # Поле `owner` только для чтения
+
 

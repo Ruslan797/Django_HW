@@ -52,54 +52,77 @@
 #         "tasks_by_status": by_status,
 #         "overdue_tasks": overdue
 #     })
-from rest_framework import generics
+
+
+# from rest_framework import generics
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from rest_framework import status
+# from .models import SubTask
+# from taskmanager.serializers.subtasks import SubTaskCreateSerializer
+# from rest_framework.pagination import PageNumberPagination
+# from taskmanager.serializers.subtasks import SubTaskSerializer
+#
+# # Задание 5:
+# class SubTaskListCreateView(APIView):
+#     def get(self, request):
+#         subtasks = SubTask.objects.all()
+#         serializer = SubTaskCreateSerializer(subtasks, many=True)
+#         return Response(serializer.data)
+#
+#     def post(self, request):
+#         serializer = SubTaskCreateSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+# class SubTaskDetailUpdateDeleteView(APIView):
+#     def get_object(self, pk):
+#         try:
+#             return SubTask.objects.get(pk=pk)
+#         except SubTask.DoesNotExist:
+#             raise status.HTTP_404_NOT_FOUND
+#
+#     def get(self, request, pk):
+#         subtask = self.get_object(pk)
+#         serializer = SubTaskCreateSerializer(subtask)
+#         return Response(serializer.data)
+#
+#     def put(self, request, pk):
+#         subtask = self.get_object(pk)
+#         serializer = SubTaskCreateSerializer(subtask, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def delete(self, request, pk):
+#         subtask = self.get_object(pk)
+#         subtask.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+#
+#
+#
+# class LargeResultsSetPagination(PageNumberPagination):
+#     page_size = 10
+#     page_size_query_param = 'page_size'
+#     max_page_size = 100
+#
+# class SubTaskList(generics.ListAPIView):
+#     serializer_class = SubTaskSerializer
+#     queryset = SubTask.objects.all().order_by('-created_at')
+#     pagination_class = LargeResultsSetPagination
+
+from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from .models import SubTask
-from taskmanager.serializers.subtasks import SubTaskCreateSerializer
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
-from taskmanager.serializers.subtasks import SubTaskSerializer
-
-# Задание 5:
-class SubTaskListCreateView(APIView):
-    def get(self, request):
-        subtasks = SubTask.objects.all()
-        serializer = SubTaskCreateSerializer(subtasks, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = SubTaskCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class SubTaskDetailUpdateDeleteView(APIView):
-    def get_object(self, pk):
-        try:
-            return SubTask.objects.get(pk=pk)
-        except SubTask.DoesNotExist:
-            raise status.HTTP_404_NOT_FOUND
-
-    def get(self, request, pk):
-        subtask = self.get_object(pk)
-        serializer = SubTaskCreateSerializer(subtask)
-        return Response(serializer.data)
-
-    def put(self, request, pk):
-        subtask = self.get_object(pk)
-        serializer = SubTaskCreateSerializer(subtask, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        subtask = self.get_object(pk)
-        subtask.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+from django.http import Http404
+from .models import SubTask
+from taskmanager.serializers.subtasks import SubTaskCreateSerializer, SubTaskSerializer
+from taskmanager.permissions import IsOwner
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -107,8 +130,49 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
 
-class SubTaskList(generics.ListAPIView):
+
+class SubTaskListCreateView(generics.ListCreateAPIView):
     serializer_class = SubTaskSerializer
-    queryset = SubTask.objects.all().order_by('-created_at')
+    permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        return SubTask.objects.filter(owner=self.request.user).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class SubTaskDetailUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = SubTask.objects.all()
+    serializer_class = SubTaskSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_object(self):
+        try:
+            obj = SubTask.objects.get(pk=self.kwargs['pk'])
+            self.check_object_permissions(self.request, obj)
+            return obj
+        except SubTask.DoesNotExist:
+            raise Http404
+
+
+class SubTaskList(APIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
+
+    def get(self, request):
+        subtasks = SubTask.objects.filter(owner=request.user).order_by('-created_at')
+        paginator = LargeResultsSetPagination()
+        paginated_subtasks = paginator.paginate_queryset(subtasks, request)
+        serializer = SubTaskSerializer(paginated_subtasks, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def post(self, request):
+        serializer = SubTaskSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(owner=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 

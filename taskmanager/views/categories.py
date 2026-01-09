@@ -32,12 +32,21 @@ from taskmanager.serializers.categories import CategorySerializer, CategoryCreat
 #         category = self.get_object()
 #         count = category.task_set.count()
 #         return Response({'category': category.name, 'tasks_count': count})
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.utils import timezone
+from taskmanager.models import Category
+from taskmanager.serializers.categories import CategorySerializer, CategoryCreateSerializer
+from rest_framework.permissions import IsAuthenticated
 
-class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.filter(is_deleted=False)
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        # A dedicated serializer is used for the creation process.
         if self.action == 'create':
             return CategoryCreateSerializer
         return CategorySerializer
@@ -45,20 +54,30 @@ class CategoryViewSet(ModelViewSet):
     @action(detail=True, methods=['get'])
     def count_tasks(self, request, pk=None):
         """
-        Custom method: number of tasks in the category.
+        Кастомный метод: количество задач в категории.
         """
         category = self.get_object()
-        count = category.tasks.count()
+        count = category.tasks.count()  # Предполагается, что у модели Category есть поле tasks (related_name)
         return Response({'category': category.name, 'tasks_count': count})
-
 
     def perform_destroy(self, instance):
         """
-        We override the delete method to implement soft deletion.
+        Переопределяем метод удаления для мягкого удаления.
         """
         instance.is_deleted = True
         instance.deleted_at = timezone.now()
         instance.save()
+
+    def get_queryset(self):
+        """
+        Дополнительная фильтрация queryset, если нужно.
+        """
+        return super().get_queryset()
+
+
+
+
+
 
 
 

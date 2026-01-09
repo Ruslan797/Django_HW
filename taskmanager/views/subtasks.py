@@ -60,10 +60,46 @@ from urllib.request import Request
 
 ###   Home Work 15
 
+# from rest_framework.generics import (
+#     ListCreateAPIView,
+#     RetrieveUpdateDestroyAPIView,
+# )
+# from django_filters.rest_framework import DjangoFilterBackend
+# from rest_framework.filters import SearchFilter, OrderingFilter
+# from rest_framework.response import Response
+# from rest_framework.request import Request
+# from rest_framework.views import APIView
+# from taskmanager.models import SubTask
+# from taskmanager.serializers.subtasks import SubTaskSerializer
+#
+#
+# class SubTaskListCreateView(ListCreateAPIView):
+#     queryset = SubTask.objects.all()
+#     serializer_class = SubTaskSerializer
+#     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+#     filterset_fields = ['status', 'deadline', 'task']
+#     search_fields = ['title', 'description']
+#     ordering_fields = ['created_at', 'deadline', 'title']
+#     ordering = ['title']
+#
+#
+# class SubTaskRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
+#     queryset = SubTask.objects.all()
+#     serializer_class = SubTaskSerializer
+#
+#
+# class SubtaskLoginApyView(APIView):
+#
+#     def post(self, request: Request) -> Response:
+#         title = request.data.get('title')
+
+
+from rest_framework import viewsets
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView,
 )
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
@@ -71,27 +107,48 @@ from rest_framework.request import Request
 from rest_framework.views import APIView
 from taskmanager.models import SubTask
 from taskmanager.serializers.subtasks import SubTaskSerializer
+from taskmanager.permissions import IsOwner  
 
 
 class SubTaskListCreateView(ListCreateAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
+    permission_classes = [IsAuthenticated]  # Только авторизованные пользователи
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'deadline', 'task']
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'deadline', 'title']
     ordering = ['title']
 
+    def perform_create(self, serializer):
+        # Автоматически назначаем владельца подзадачи
+        serializer.save(owner=self.request.user)
+
 
 class SubTaskRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     queryset = SubTask.objects.all()
     serializer_class = SubTaskSerializer
+    permission_classes = [IsAuthenticated, IsOwner]  # Только владелец может изменять/удалять
 
 
 class SubtaskLoginApyView(APIView):
-
     def post(self, request: Request) -> Response:
         title = request.data.get('title')
+        # Ваша логика для обработки запроса
+        return Response({"message": "Received title: " + title})
+
+
+class SubTaskViewSet(viewsets.ModelViewSet):
+    serializer_class = SubTaskSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return SubTask.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
 
 
 
