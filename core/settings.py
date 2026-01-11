@@ -164,6 +164,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@taskmanager.local"
+
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'core.pagination.CustomCursorPagination',
     #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
