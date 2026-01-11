@@ -60,3 +60,8 @@
 ### Logout
 ![Logout](./core/screenshots/logout_HW_20.png)
 
+### Home work 21
+![Home_work_21](./core/screenshots/hw_21.png)
+
+###  Consol Home work 21
+![Consol_home_work_21](./core/screenshots/consol_hw_21.png)
