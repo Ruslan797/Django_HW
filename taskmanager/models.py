@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 User = get_user_model()
 
@@ -39,13 +40,17 @@ class Task(models.Model):
         ('done', 'Done'),
     ]
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks', null=True, blank=True)
     title = models.CharField(max_length=150, unique=True)
     description = models.TextField()
     categories = models.ManyToManyField(Category, related_name="tasks")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tasks",
+    )
 
     class Meta:
         unique_together = ('title', 'created_at')
@@ -66,13 +71,17 @@ class SubTask(models.Model):
         ('done', 'Done'),
     ]
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subtasks', null=True, blank=True)
     title = models.CharField(max_length=150, unique=True)
     description = models.TextField()
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="subtasks")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
     deadline = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="subtasks",
+    )
 
     class Meta:
         unique_together = ('title', 'created_at')
@@ -83,6 +92,10 @@ class SubTask(models.Model):
 
     def __str__(self):
         return f"SubTask: {self.title} (for {self.task.title})"
+
+
+
+
 
 
 

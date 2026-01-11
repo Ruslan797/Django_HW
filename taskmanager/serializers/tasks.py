@@ -85,7 +85,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class TaskSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')  # Поле только для чтения
+    owner = serializers.ReadOnlyField(source="owner.username")
     categories = CategorySerializer(many=True, read_only=True)
     categories_ids = serializers.PrimaryKeyRelatedField(
         many=True,
